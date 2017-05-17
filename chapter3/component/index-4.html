@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang=en>
+    <head>
+        <meta charset="UTF-8">
+        <title>Components inside other components</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    </head>
+    <body>
+        <!--template for the form-->
+        <template id="form">
+            <div>
+                <label for="name">What's your name?</label>
+                <!--<input v-model="user" type="text" id="name" />-->
+                <input v-bind:value="value" type="text" id="name" v-on:input="onInput" />
+            </div>
+        </template>
+        <!--template for saying hello-->
+        <template id="hello">
+            <h1>{{smg}} {{user}}</h1>
+        </template>
+
+        <!-- greetings template that usa both form and hello components-->
+        <template id="greetings">
+            <div>
+                <!--<form-component :user="user"></form-component>-->
+                <form-component v-model="user"></form-component>
+                <hello-component v-bind:user="user"></hello-component>
+            </div>
+        </template>
+
+        <div id="app">
+            <greetings-component></greetings-component>
+        </div>
+
+
+        <script src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
+        <script>
+
+            Vue.component('form-component', {
+                template: '#form',
+                props: ['value'],
+                methods: {
+                    onInput: function(event) {
+                        this.$emit('input', event.target.value);
+                    }
+                }
+            });
+
+            Vue.component('hello-component', {
+                template: '#hello', //using template in component
+                data: function() {
+                    return {
+                        smg: 'Hello'
+                    }
+                },
+                props:  ['user']
+            });
+            
+            //create greetings component based on the greetings template
+            Vue.component('greetings-component', {
+                template: '#greetings',
+                data: function() {
+                    return {
+                        user: 'hero'
+                    }
+                }
+            });
+            
+            new Vue({
+                el: '#app'
+            });
+
+        </script>
+    </body>
+</html>

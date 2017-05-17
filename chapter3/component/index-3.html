@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang=en>
+    <head>
+        <meta charset="UTF-8">
+        <title>Scope of the components</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    </head>
+    <body>
+        <template id="hello">
+            <h1>{{smg}} {{user}}</h1>
+        </template>
+
+        <div id="app">
+            <hello-component v-bind:user="user"></hello-component>
+        </div>
+
+
+        <script src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
+        <script>
+            Vue.component('hello-component', {
+                template: '#hello', //using template in component
+                data: function() {
+                    return {
+                        smg: 'Hello'
+                    }
+                },
+                props:  ['user']
+            });
+            
+            new Vue({
+                el: '#app',
+                data: {
+                    user: 'hero'
+                }
+            });
+
+
+        </script>
+    </body>
+</html>

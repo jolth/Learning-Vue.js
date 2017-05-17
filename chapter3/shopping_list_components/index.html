@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang=en>
+    <head>
+        <meta charset="UTF-8">
+        <title>Shopping List</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <style>
+            .container {
+                width: 40%;
+                margin: 20px auto 0px auto;
+            }
+
+            .removed {
+                color: gray;
+            }
+
+            .removed label {
+                text-decoration: line-through;
+            }
+
+            ul li {
+                list-style-type: none;
+            }
+
+            .footer {
+                font-size: 0.7em;
+                margin-top: 20vh;
+            }
+        </style>
+    </head>
+    <body>
+        <!--add new item template-->
+        <template id="add-item-template">
+            <div class="input-group">
+                <input v-on:keyup.enter="addItem" v-model="newItem"
+                placeholder="add shopping list item" type="text"
+                class="form-control">
+                <span class="input-group-btn">
+                    <button v-on:click="addItem" class="btn btn-default"
+                         type="button">Add!</button>
+                 </span>
+            </ div>
+        </template>
+
+        <!--list item template-->
+        <template id="item-template">
+            <li v-bind:class="{'removed': item.checked}">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" v-model="item.checked">{{item.text}}
+                    </label>
+                </div>
+            </li>
+        </template>
+
+        <!--items list template-->
+        <template id="items-template">
+            <ul>
+                <item-component v-for="item in items"
+                    v-bind:item="item"></item-component>
+            </ul>
+        </template>
+
+        <!--change title template-->
+        <template id="change-title-template">
+            <div>  
+                <em>Change the title of your shopping list here</em>
+                <input v-bind:value="value" v-on:input="onInput">
+            </div> 
+        </template>
+
+        <!--main components-->
+        <div id="app" class="container">
+            <h2>{{ title }}</h2>
+            <add-item-component v-bind:items="items"></add-item-component>
+            <items-component v-bind:items="items"></items-component>
+            <div class="footer">
+                <hr>
+                 <change-title-component v-model="title"></change-title-component>
+             </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" type="text/javascript"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <!--<script src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"></script>
+        <script>
+            //add item component
+            Vue.component('add-item-component', {
+                template: '#add-item-template',
+                props: ['items'],
+                methods: {
+                    addItem: function() {
+                        var text;
+
+                        text = this.newItem.trim();
+                        if (text) {
+                            this.items.push({
+                                text: text,
+                                checked: false
+                            });
+                            this.newItem = "";
+                        }
+                    }
+                },     
+                data: function() {
+                    return {
+                        newItem: ''
+                    }
+                }
+            });
+            //item component
+            Vue.component('item-component', {
+                template: '#item-template',
+                props: ['item']
+            });
+            //items component
+            Vue.component('items-component', {
+                template: '#items-template',
+                props: ['items']
+            });
+            //change title component
+            Vue.component('change-title-component', {
+                template : '#change-title-template',
+                props: ['value'],
+                methods: {
+                    onInput: function(event) {
+                        this.$emit('input', event.target.value);
+                    }
+                }
+            });
+
+            var data = {
+                items: [{text: "Bananas", checked: true}, {text: "Apples",
+                    checked: false}],
+                title: "My Shopping List",
+                newItem: ""
+            };
+
+            new Vue({
+                el: '#app',
+                data: data,
+            });
+        </script>
+    </body>
+</html>
